@@ -22,7 +22,7 @@ export class ProjectController {
   };
   static getProjectById = async (req: Request, res: Response) => {
     try {
-      const project = await Project.findById(req.params.id);
+      const project = await Project.findById(req.params.id).populate("tasks");
       if (!project) {
         const error = new Error("Proyecto no encontrado");
         return res.status(404).json({ error: error.message });
@@ -34,7 +34,14 @@ export class ProjectController {
   };
   static updateProjectById = async (req: Request, res: Response) => {
     try {
-      const project = await Project.findByIdAndUpdate(req.params.id, req.body);
+      const project = await Project.findById(req.params.id);
+      if (!project) {
+        const error = new Error("Proyecto no encontrado");
+        return res.status(404).json({ error: error.message });
+      }
+      project.projectName = req.body.projectName;
+      project.clientName = req.body.clientName;
+      project.description = req.body.description;
       await project.save();
       res.json("Proyecto Actualizado");
     } catch (error) {
