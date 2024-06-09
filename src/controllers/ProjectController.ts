@@ -4,9 +4,10 @@ import Project from "../models/Project";
 export class ProjectController {
   static createProject = async (req: Request, res: Response) => {
     const project = new Project(req.body);
+
     try {
       await project.save();
-      res.send("Proyecto Creado Correctamente");
+      res.send("Proyecto Creado Correctamente!");
     } catch (error) {
       console.log(error);
     }
@@ -43,7 +44,7 @@ export class ProjectController {
       project.clientName = req.body.clientName;
       project.description = req.body.description;
       await project.save();
-      res.json("Proyecto Actualizado");
+      res.json("Proyecto Actualizado!");
     } catch (error) {
       console.log(error);
     }
