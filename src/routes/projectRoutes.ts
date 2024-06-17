@@ -5,22 +5,23 @@ import { handleInputsError } from "../middleware/validation";
 import { TaskController } from "../controllers/TaskController";
 import { validateProjectExists } from "../middleware/project";
 import { taskBelongsToProject, validateTaskExists } from "../middleware/task";
+import { authenticate } from "../middleware/auth";
 
 const router = Router();
 
-router.get(
-  "/",
+router.use(authenticate);
 
-  ProjectController.getAllProjects
-);
+router.get("/", ProjectController.getAllProjects);
 router.get(
   "/:id",
+
   param("id").isMongoId().withMessage("ID no válido"),
   handleInputsError,
   ProjectController.getProjectById
 );
 router.post(
   "/",
+
   body("projectName")
     .notEmpty()
     .withMessage("El nombre del proyecto es obligatorio"),
