@@ -24,4 +24,19 @@ export class AuthEmail {
     });
     console.log("Mensaje enviado", info.messageId);
   };
+  static sendPasswordResetToken = async (user: EmailType) => {
+    const info = await transport.sendMail({
+      from: "TaskSphere <admin@tasksphere.com>",
+      to: user.email,
+      subject: "TaskSphere - Restablede tu Contraseña",
+      text: "TaskSphere - Restablede tu Contraseña",
+      html: `<p>Hola ${user.name}, has solicitado restablecer tu contraseña.</p>
+      <p>Visita el siguiente enlace:</p>
+      <a href="${process.env.FRONTEND_URL}/auth/new-password">Restablecer Contraseña</a>
+      <p>E ingresa el código: <b>${user.token}</b></p>
+      <p>Este token expira en 10 minutos</p>
+      `,
+    });
+    console.log("Mensaje enviado", info.messageId);
+  };
 }

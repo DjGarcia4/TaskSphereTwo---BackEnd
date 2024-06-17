@@ -18,7 +18,7 @@ const TokenSchema: Schema = new Schema({
   createdAt: {
     type: Date,
     default: Date.now(),
-    expires: "10m",
+    expiresAt: "10m",
   },
 });
 
