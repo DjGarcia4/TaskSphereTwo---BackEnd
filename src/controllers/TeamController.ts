@@ -51,6 +51,10 @@ export class TeamMemberController {
   };
   static addManager = async (req: Request, res: Response) => {
     try {
+      if (req.project.manager.length >= 2) {
+        const error = new Error("Solo pueden haber dos managers");
+        return res.status(409).json({ error: error.message });
+      }
       const { id } = req.body;
       const user = await User.findById(id).select("id name");
       if (!user) {
