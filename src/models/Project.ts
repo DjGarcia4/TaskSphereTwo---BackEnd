@@ -8,9 +8,10 @@ export type ProjectType = Document & {
   description: String;
   tasks: PopulatedDoc<TasktType & Document>[];
   manager: PopulatedDoc<UserType & Document>[];
+  team: PopulatedDoc<UserType & Document>[];
 };
 
-const ProjcetSchema: Schema = new Schema(
+const ProjectSchema: Schema = new Schema(
   {
     projectName: {
       type: String,
@@ -29,9 +30,10 @@ const ProjcetSchema: Schema = new Schema(
     },
     tasks: [{ type: Types.ObjectId, ref: "Task" }],
     manager: [{ type: Types.ObjectId, ref: "User" }],
+    team: [{ type: Types.ObjectId, ref: "User" }],
   },
   { timestamps: true }
 );
 
-const Project = mongoose.model<ProjectType>("Project", ProjcetSchema);
+const Project = mongoose.model<ProjectType>("Project", ProjectSchema);
 export default Project;
