@@ -109,6 +109,17 @@ router.post(
   handleInputsError,
   TeamMemberController.addMemberById
 );
+router.get(
+  "/:projectId/team",
+
+  TeamMemberController.getMembers
+);
+router.delete(
+  "/:projectId/team",
+  body("id").isMongoId().withMessage("ID no Válido"),
+  handleInputsError,
+  TeamMemberController.removeMemberById
+);
 router.post(
   "/:projectId/team/manager",
   body("id").isMongoId().withMessage("ID no Válido"),

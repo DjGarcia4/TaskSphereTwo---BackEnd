@@ -83,4 +83,34 @@ export class TeamMemberController {
       res.status(500).json({ erorr: "Hubo un error" });
     }
   };
+  static removeMemberById = async (req: Request, res: Response) => {
+    try {
+      const { id } = req.body;
+
+      if (
+        !req.project.team.some((member) => member.toString() === id.toString())
+      ) {
+        const error = new Error(`Ya no es colaborador en el proyecto`);
+        return res.status(409).json({ error: error.message });
+      }
+      req.project.team = req.project.team.filter(
+        (member) => member.toString() !== id.toString()
+      );
+      await req.project.save();
+      res.send(`Colaborador eliminado correctamente!`);
+    } catch (error) {
+      res.status(500).json({ erorr: "Hubo un error" });
+    }
+  };
+  static getMembers = async (req: Request, res: Response) => {
+    try {
+      const project = await Project.findById(req.project.id).populate({
+        path: "team",
+        select: "id email name",
+      });
+      res.json(project.team);
+    } catch (error) {
+      res.status(500).json({ erorr: "Hubo un error" });
+    }
+  };
 }
