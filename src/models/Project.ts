@@ -3,9 +3,9 @@ import { TasktType } from "./Task";
 import { UserType } from "./User";
 
 export type ProjectType = Document & {
-  projectName: String;
-  clientName: String;
-  description: String;
+  projectName: string;
+  clientName: string;
+  description: string;
   tasks: PopulatedDoc<TasktType & Document>[];
   manager: PopulatedDoc<UserType & Document>[];
   team: PopulatedDoc<UserType & Document>[];
@@ -15,17 +15,17 @@ const ProjectSchema: Schema = new Schema(
   {
     projectName: {
       type: String,
-      require: true,
+      required: true,
       trim: true,
     },
     clientName: {
       type: String,
-      require: true,
+      required: true,
       trim: true,
     },
     description: {
       type: String,
-      require: true,
+      required: true,
       trim: true,
     },
     tasks: [{ type: Types.ObjectId, ref: "Task" }],
