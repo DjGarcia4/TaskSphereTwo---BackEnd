@@ -6,9 +6,17 @@ export class TeamMemberController {
   static findMemberByEmail = async (req: Request, res: Response) => {
     try {
       const { email } = req.body;
-      const user = await User.findOne({ email }).select("id name email");
+      const user = await User.findOne({ email }).select(
+        "id name email confirmed"
+      );
       if (!user) {
         const error = new Error("Usuario no encontrado");
+        return res.status(401).json({ error: error.message });
+      }
+      if (!user.confirmed) {
+        const error = new Error(
+          "Usuario encontrado pero aún no ha sido confirmado"
+        );
         return res.status(401).json({ error: error.message });
       }
       res.json(user);
@@ -39,7 +47,7 @@ export class TeamMemberController {
           (member) => member.toString() === user.id.toString()
         )
       ) {
-        const error = new Error(`${user.name} ya es manager en el proyecto`);
+        const error = new Error(`${user.name} es manager en el proyecto`);
         return res.status(409).json({ error: error.message });
       }
       req.project.team.push(user.id);
@@ -85,16 +93,18 @@ export class TeamMemberController {
   };
   static removeMemberById = async (req: Request, res: Response) => {
     try {
-      const { id } = req.body;
+      const { userId } = req.params;
 
       if (
-        !req.project.team.some((member) => member.toString() === id.toString())
+        !req.project.team.some(
+          (member) => member.toString() === userId.toString()
+        )
       ) {
-        const error = new Error(`Ya no es colaborador en el proyecto`);
+        const error = new Error(`No es colaborador en el proyecto`);
         return res.status(409).json({ error: error.message });
       }
       req.project.team = req.project.team.filter(
-        (member) => member.toString() !== id.toString()
+        (member) => member.toString() !== userId.toString()
       );
       await req.project.save();
       res.send(`Colaborador eliminado correctamente!`);
