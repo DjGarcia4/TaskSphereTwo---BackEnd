@@ -25,7 +25,16 @@ export class TaskController {
   };
   static getTaskById = async (req: Request, res: Response) => {
     try {
-      res.json(req.task);
+      const task = await Task.findById(req.task.id)
+        .populate({
+          path: "completedBy.user",
+          select: "id name email",
+        })
+        .populate({
+          path: "assignedTo",
+          select: "id name",
+        });
+      res.json(task);
     } catch (error) {
       res.status(500).json({ erorr: "Hubo un error" });
     }
@@ -57,8 +66,23 @@ export class TaskController {
     try {
       const { status } = req.body;
       req.task.status = status;
+      const data = {
+        user: req.user.id,
+        status,
+      };
+      req.task.completedBy.push(data);
       req.task.save();
       res.send("Estado actualizado correctamente");
+    } catch (error) {
+      res.status(500).json({ erorr: "Hubo un error" });
+    }
+  };
+  static updateAssigned = async (req: Request, res: Response) => {
+    try {
+      const { assignedTo } = req.body;
+      req.task.assignedTo = assignedTo;
+      req.task.save();
+      res.send("Tarea asignada correctamente!");
     } catch (error) {
       res.status(500).json({ erorr: "Hubo un error" });
     }

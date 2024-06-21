@@ -15,6 +15,11 @@ export type TasktType = Document & {
   description: String;
   project: Types.ObjectId;
   status: TaskStatus;
+  completedBy: {
+    user: Types.ObjectId;
+    status: TaskStatus;
+  }[];
+  assignedTo: Types.ObjectId;
 };
 const TasktSchema: Schema = new Schema(
   {
@@ -36,6 +41,25 @@ const TasktSchema: Schema = new Schema(
       type: String,
       enum: Object.values(taskStatus),
       default: taskStatus.PENDING,
+    },
+    completedBy: [
+      {
+        user: {
+          type: Types.ObjectId,
+          ref: "User",
+          default: null,
+        },
+        status: {
+          type: String,
+          enum: Object.values(taskStatus),
+          default: taskStatus.PENDING,
+        },
+      },
+    ],
+    assignedTo: {
+      type: Types.ObjectId,
+      ref: "User",
+      default: null,
     },
   },
   { timestamps: true }

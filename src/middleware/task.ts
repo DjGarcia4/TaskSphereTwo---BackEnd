@@ -40,3 +40,14 @@ export async function taskBelongsToProject(
     res.status(500).json({ error: "Hubo un error" });
   }
 }
+export async function hasAuthorization(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  if (!req.project.manager.includes(req.user.id.toString())) {
+    const error = new Error("Accion no válida");
+    return res.status(400).json({ error: error.message });
+  }
+  next();
+}

@@ -4,7 +4,11 @@ import { body, param } from "express-validator";
 import { handleInputsError } from "../middleware/validation";
 import { TaskController } from "../controllers/TaskController";
 import { validateProjectExists } from "../middleware/project";
-import { taskBelongsToProject, validateTaskExists } from "../middleware/task";
+import {
+  hasAuthorization,
+  taskBelongsToProject,
+  validateTaskExists,
+} from "../middleware/task";
 import { authenticate } from "../middleware/auth";
 import { TeamMemberController } from "../controllers/TeamController";
 
@@ -15,14 +19,12 @@ router.use(authenticate);
 router.get("/", ProjectController.getAllProjects);
 router.get(
   "/:id",
-
   param("id").isMongoId().withMessage("ID no válido"),
   handleInputsError,
   ProjectController.getProjectById
 );
 router.post(
   "/",
-
   body("projectName")
     .notEmpty()
     .withMessage("El nombre del proyecto es obligatorio"),
@@ -59,6 +61,7 @@ router.param("taskId", validateTaskExists);
 router.param("taskId", taskBelongsToProject);
 router.post(
   "/:projectId/tasks",
+  hasAuthorization,
   body("name").notEmpty().withMessage("El nombre de la tarea es obligatorio"),
   body("description").notEmpty().withMessage("La descripción es obligatoria"),
   handleInputsError,
@@ -76,6 +79,7 @@ router.get(
 );
 router.put(
   "/:projectId/tasks/:taskId",
+  hasAuthorization,
   param("taskId").isMongoId().withMessage("ID no válido"),
   body("name").notEmpty().withMessage("El nombre de la tarea es obligatorio"),
   body("description").notEmpty().withMessage("La descripción es obligatoria"),
@@ -84,6 +88,7 @@ router.put(
 );
 router.delete(
   "/:projectId/tasks/:taskId",
+  hasAuthorization,
   param("taskId").isMongoId().withMessage("ID no válido"),
   handleInputsError,
   TaskController.deleteTask
@@ -94,6 +99,15 @@ router.post(
   body("status").notEmpty().withMessage("El estado es obligatorio"),
   handleInputsError,
   TaskController.updateStatus
+);
+router.post(
+  "/:projectId/tasks/:taskId/assigne",
+  param("taskId").isMongoId().withMessage("ID no válido"),
+  body("assignedTo")
+    .notEmpty()
+    .withMessage("Ees obligatorio asignar la tarea a un miembro"),
+  handleInputsError,
+  TaskController.updateAssigned
 );
 
 //Routes for team
