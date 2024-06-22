@@ -20,6 +20,7 @@ export type TasktType = Document & {
     status: TaskStatus;
   }[];
   assignedTo: Types.ObjectId;
+  notes: Types.ObjectId[];
 };
 const TasktSchema: Schema = new Schema(
   {
@@ -61,6 +62,7 @@ const TasktSchema: Schema = new Schema(
       ref: "User",
       default: null,
     },
+    notes: [{ type: Types.ObjectId, ref: "Note" }],
   },
   { timestamps: true }
 );

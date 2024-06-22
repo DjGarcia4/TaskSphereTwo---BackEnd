@@ -32,7 +32,11 @@ export class TaskController {
         })
         .populate({
           path: "assignedTo",
-          select: "id name",
+          select: "id name email",
+        })
+        .populate({
+          path: "notes",
+          populate: { path: "createdBy" },
         });
       res.json(task);
     } catch (error) {

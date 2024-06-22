@@ -11,6 +11,7 @@ import {
 } from "../middleware/task";
 import { authenticate } from "../middleware/auth";
 import { TeamMemberController } from "../controllers/TeamController";
+import { NoteController } from "../controllers/NoteController";
 
 const router = Router();
 
@@ -139,6 +140,23 @@ router.post(
   body("id").isMongoId().withMessage("ID no Válido"),
   handleInputsError,
   TeamMemberController.addManager
+);
+
+//Routes for Notes
+router.post(
+  "/:projectId/tasks/:taskId/notes",
+  body("content")
+    .notEmpty()
+    .withMessage("El contenido de la nota es obligatorio"),
+  handleInputsError,
+  NoteController.createNote
+);
+router.get("/:projectId/tasks/:taskId/notes", NoteController.getTaskNotes);
+router.delete(
+  "/:projectId/tasks/:taskId/notes/:noteId",
+  param("noteId").isMongoId().withMessage("ID no válido"),
+  handleInputsError,
+  NoteController.deleteNote
 );
 
 export default router;
